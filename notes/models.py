@@ -1,5 +1,8 @@
+from django.contrib.postgres.indexes import GinIndex, OpClass
+from django.db.models.functions import Upper
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 class Category(models.Model):
     name = models.CharField("Название", max_length=100, unique=True)
@@ -46,9 +49,19 @@ class Note(models.Model):
     )
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering = ["-created_at", "-id"]
         verbose_name = "Заметка"
         verbose_name_plural = "Заметки"
+        indexes = [
+            GinIndex(OpClass(Upper("title"), name="gin_trgm_ops"), name="note_title_trgm_idx"),
+            models.Index(fields=["-created_at", "-id"], name="note_created_idx"),
+            models.Index(fields=["category", "-created_at", "-id"], name="note_cat_created_idx"),
+            models.Index(
+                fields=["-created_at", "-id"],
+                condition=Q(is_done=False),
+                name="note_active_created_idx",
+            ),
+        ]
 
     def __str__(self):
         return self.title
