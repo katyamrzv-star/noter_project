@@ -8,7 +8,7 @@ class IndexQueriesTest(TestCase):
         user = get_user_model().objects.create(username="u")
         cat = Category.objects.create(name="c")
         tag = Tag.objects.create(name="t")
-        for i in range(30):
+        for i in range(60):
             note = Note.objects.create(title=f"n{i}", owner=user, category=cat)
             note.tags.add(tag)
 
