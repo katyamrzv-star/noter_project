@@ -35,6 +35,7 @@ python-dotenv==1.2.4
 python-engineio==4.15.1
 python-socketio==5.18.1
 pyzmq==27.3.0
+redis==8.1.0
 requests==2.34.2
 simple-websocket==1.1.0
 sqlparse==0.6.1

@@ -1,5 +1,5 @@
 {% extends "notes/base.html" %}
-
+{% load cache %}
 {% block content %}
  <form method="get">
   <input name="q" value="{{ request.GET.q }}" placeholder="Поиск по заголовку">
@@ -17,6 +17,7 @@
  <a class="btn" href="{% url 'notes:create' %}">+ Новая заметка</a>
 
  {% for note in page %}
+  {% cache 3600 note_card note.pk note.updated_at %}
   <article class="note {% if note.is_done %}done{% endif %}">
    <h2>{{ note.title }}</h2>
    <p>{{ note.text|truncatechars:150 }}</p>
@@ -27,6 +28,7 @@
    <a href="{% url 'notes:update' note.pk %}">Изменить</a>
    <a href="{% url 'notes:delete' note.pk %}">Удалить</a>
   </article>
+{% endcache %}
  {% endfor %}
 <nav>
  {% if page.has_previous %}

@@ -4,6 +4,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import NoteForm
 from .models import Category, Note
+from .services import get_categories_with_counts
+
 
 def index(request):
     notes = Note.objects.select_related("category", "owner").prefetch_related("tags")
@@ -16,7 +18,7 @@ def index(request):
 
     paginator = Paginator(notes, 20)
     page = paginator.get_page(request.GET.get("page"))
-    categories = Category.objects.annotate(notes_count=Count("notes")).order_by("name")
+    categories = get_categories_with_counts()
     return render(request, "notes/note_list.html", {
         "page": page, "categories": categories,
     })
