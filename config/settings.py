@@ -176,3 +176,11 @@ else:
     }
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
