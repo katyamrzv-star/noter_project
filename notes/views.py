@@ -4,8 +4,9 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import NoteForm
 from .models import Category, Note
-from .services import get_categories_with_counts
-
+from .services import get_categories_with_counts, notify_external_service
+from django.db import transaction
+from .tasks import notify_note_created
 
 def index(request):
     notes = Note.objects.select_related("category", "owner").prefetch_related("tags")
@@ -27,7 +28,8 @@ def note_create(request):
     if request.method == "POST":
         form = NoteForm(request.POST)
         if form.is_valid():
-            form.save()
+            note = form.save()
+            transaction.on_commit(lambda: notify_note_created.delay(note.pk))
             return redirect("notes:index")
     else:
         form = NoteForm()

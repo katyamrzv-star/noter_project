@@ -1,3 +1,5 @@
+import logging
+import time
 from django.core.cache import cache
 from django.db.models import Count
 
@@ -11,3 +13,8 @@ def get_categories_with_counts():
         lambda: list(Category.objects.annotate(notes_count=Count("notes")).order_by("name")),
         timeout=600,
     )
+logger = logging.getLogger(__name__)
+
+def notify_external_service(note):
+    time.sleep(3)
+    logger.warning("Внешний сервис уведомлён о заметке %s", note.pk)
